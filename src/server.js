@@ -63,6 +63,10 @@ function removeZipFile(zipFileName) {
   fs.unlinkSync(path.join(tempDir, `${zipFileName}.zip`));
 }
 
+const serverStatus = (request, reply) => {
+  reply.status(200).send({ message: "server is running!" });
+};
+
 const getFiles = (request, reply) => {
   // Definindo cabeçalhos de resposta
   reply.header("Content-Type", "application/zip");
@@ -86,14 +90,12 @@ const getFiles = (request, reply) => {
 
 const app = fastify({ logger: false });
 
+// rota estática para servir os arquivos
 app.register(fastifyStatic, {
   root: path.join(__dirname, "../", "public"), // Caminho onde os arquivos temporários serão salvos
 });
 
-app.get("/", (request, reply) => {
-  reply.status(200).send({ message: "server is running!" });
-});
-
+app.get("/", serverStatus);
 app.get("/get-file", getFiles);
 
 // Inicia o servidor
